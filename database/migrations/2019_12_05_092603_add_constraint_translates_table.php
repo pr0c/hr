@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTextsTable extends Migration
+class AddConstraintTranslatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,9 @@ class CreateTextsTable extends Migration
      */
     public function up()
     {
-        Schema::create('texts', function(Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('text_id');
+        Schema::table('translates', function(Blueprint $table) {
+            $table->bigInteger('translate_id')->unsigned()->change();
+            $table->foreign('translate_id')->references('id')->on('texts')->onDelete('cascade');
         });
     }
 
@@ -25,6 +25,6 @@ class CreateTextsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('texts');
+        //
     }
 }

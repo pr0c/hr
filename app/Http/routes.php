@@ -14,3 +14,19 @@
 Route::get('/', function () {
     echo 'HR';
 });
+
+//Person
+Route::get('/person/{id}/{lang?}', 'PersonController@getPerson');
+Route::post('/person', 'PersonController@store');
+Route::post('/person/account', 'PersonController@ownAccount');
+
+//Account
+Route::get('/account/{id}', 'AccountController@getAccount');
+Route::post('/account', 'AccountController@store');
+
+//Text
+Route::get('/text/{id}/{lang}', 'MainController@index');
+Route::post('/text', 'TextController@store');
+
+//Language
+Route::post('/language', 'LanguageController@store');
