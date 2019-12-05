@@ -36,5 +36,11 @@ class LanguageController extends Controller {
                 }
             }
         }
+
+        return true;
+    }
+
+    public function delete($id) {
+        return Language::findOrFail($id)->delete();
     }
 }

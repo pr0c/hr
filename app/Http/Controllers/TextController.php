@@ -19,4 +19,8 @@ class TextController extends Controller {
             }
         }
     }
+
+    public function delete($id) {
+        return Text::findOrFail($id)->delete();
+    }
 }

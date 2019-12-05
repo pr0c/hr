@@ -19,4 +19,16 @@ class Account extends Model {
     public function services() {
         return $this->belongsToMany(AccountService::class, 'supported_services', 'account_id', 'service_id');
     }
+
+    /*protected static function boot() {
+        parent::boot();
+
+        static::created(function($account) {
+            UserAccount::create([
+                'account_id' => $account->id,
+                'user_id' => $account->owner_id,
+                'user_type' => $account->owner_type
+            ]);
+        });
+    }*/
 }

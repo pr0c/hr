@@ -13,12 +13,20 @@ class Person extends Model {
     protected $table = 'persons';
     public $timestamps = false;
 
-    public function accounts() {
+    public function ownAccounts() {
         return $this->morphMany(Account::class, 'owner');
     }
 
+    public function userAccounts() { //Own and shared accounts
+        return $this->morphMany(UserAccount::class, 'user');
+    }
+
     public function scopeWithAccounts($query) {
-        return $query->with('accounts');
+        return $query->with('ownAccounts');
+    }
+
+    public function scopeWithUserAccounts($query) {
+        return $query->with('userAccounts');
     }
 
     public function scopePhotos($query) {
