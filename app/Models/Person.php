@@ -25,13 +25,17 @@ class Person extends Model {
         return $query->with('ownAccounts');
     }
 
-    public function scopeWithUserAccounts($query) {
-        return $query->with('userAccounts');
-    }
-
     public function scopePhotos($query) {
         return $query->with('photos');
     }
+
+    /*public function scopeWithUserAccounts($query, $lang = 1) {
+        return $query->with(['userAccounts' => function($q) use($lang) {
+            return $q->with(['account' => function($account) use($lang) {
+                return $account->extendedAccount($lang);
+            }]);
+        }]);
+    }*/
 
     /*protected static function boot() {
         parent::boot();

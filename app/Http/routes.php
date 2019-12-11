@@ -12,7 +12,23 @@
 */
 
 Route::get('/', function () {
-    echo 'HR';
+    $services = [
+        [
+            'pivot' => [
+                'account_id' => 0,
+                'service_id' => 15
+            ]
+        ],
+        [
+            'pivot' => [
+                'account_id' => 0,
+                'service_id' => 47
+            ]
+        ]
+    ];
+
+    $new_services = array_pluck($services, 'pivot.service_id');
+    print_r($new_services);
 });
 
 //Person

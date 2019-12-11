@@ -12,4 +12,12 @@ class UserAccount extends Model {
     public function users() {
         return $this->morphTo('user');
     }
+
+    public function account() {
+        return $this->hasOne(Account::class, 'id', 'account_id');
+    }
+
+    public function scopeWithInfo($query) {
+        return $query->with('account');
+    }
 }

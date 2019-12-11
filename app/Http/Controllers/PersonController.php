@@ -1,13 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\AccountService;
 use App\Models\Person;
 use App\Models\Account;
 use App\Models\UserAccount;
 
 class PersonController extends Controller {
     public function getPerson($id, $lang = 1) {
-        return Person::extendedAccount($lang)->find($id);
+        return Person::withUserAccounts($lang)->find($id);
     }
 
     public function delete($id) {
@@ -39,10 +40,19 @@ class PersonController extends Controller {
             }
             $person->save();
 
-            if(array_key_exists('accounts', $request)) {
-                foreach($request['accounts'] as $account) {
-                    if(empty($account['owner_id'])) {
-                        $newAccount = $person->accounts()->create($account);
+            if(array_key_exists('user_accounts', $request)) {
+                /*foreach($request['user_accounts'] as $account) {
+                    if(!$account['account']) continue;
+                    else $account = $account['account'];
+
+                    if(empty($account['owner_id']) && !Account::isExist($account['identifier'])) {
+                        $validator = \Validator::make($account, Account::$validation);
+                        if($validator->fails()) {
+                            return $validator->errors();
+                        }
+
+                        $newAccount = $person->ownAccounts()->create($account);
+
                         UserAccount::create([
                             'account_id' => $newAccount->id,
                             'user_id' => $newAccount->owner_id,
@@ -50,17 +60,32 @@ class PersonController extends Controller {
                         ]);
                     }
                     else {
-                        $newAccount = Account::fill($account)->save();
-                        UserAccount::create([
-                            'account_id' => $newAccount->id,
-                            'user_id' => $person->id,
-                            'user_type' => Person::class
+                        if(empty($account['id'])) {
+                            $validator = \Validator::make($account, Account::$validation);
+                            if($validator->fails()) {
+                                return $validator->errors();
+                            }
+                            $newAccount = Account::create($account);
+                            $accountID = $newAccount->id;
+                        }
+                        else $accountID = $account['id'];
+
+                        $person->userAccounts()->create([
+                            'account_id' => $accountID
                         ]);
                     }
-                }
+
+                    if($account['services'] && empty($account['id'])) {
+                        $services = AccountService::find(array_pluck($account['services'], 'pivot.service_id'));
+                        foreach($services as $service) {
+                            $newAccount->services()->attach($service);
+                        }
+                    }
+                }*/
+                $this->addAccounts($person, $request['user_accounts']);
             }
-            //TODO return person with full information
-            return $person->withUserAccounts();
+
+            return Person::withUserAccounts()->find($person->id);
         }
 
         return false;
@@ -77,7 +102,7 @@ class PersonController extends Controller {
         if($person) {
             $account = Account::find($accountID);
             if($account) {
-                $person->accounts()->save($account);
+                $person->ownAccounts()->save($account);
             }
         }
 
