@@ -29,6 +29,18 @@ class Person extends Model {
         return $query->with('photos');
     }
 
+    public function facePic() {
+        return $this->hasOne(Attachment::class, 'attachment_id', 'face_pic');
+    }
+
+    public function photos() {
+        return $this->hasMany(Attachment::class, 'attachment_id', 'attachment_id');
+    }
+
+    public function certifications() {
+        return $this->morphMany(Certification::class, 'owner');
+    }
+
     /*public function scopeWithUserAccounts($query, $lang = 1) {
         return $query->with(['userAccounts' => function($q) use($lang) {
             return $q->with(['account' => function($account) use($lang) {

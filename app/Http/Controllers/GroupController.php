@@ -7,7 +7,7 @@ use App\Models\Account;
 
 class GroupController extends Controller {
     public function get($id, $lang = 1) {
-
+        return Group::withUserAccounts($lang)->find($id);
     }
 
     public function store() {

@@ -9,7 +9,12 @@ use App\Models\Translate;
 use Illuminate\Database\QueryException;
 
 class LanguageController extends Controller {
+    public function index($lang = 1) {
+        return Language::withTranslate($lang)->get();
+    }
+
     public function store() {
+        $newLanguages = [];
         if(request()->isJson()) {
             $request = json_decode(request()->getContent(), true);
             if($request['languages']) {
@@ -26,7 +31,9 @@ class LanguageController extends Controller {
 
                     if(count($language['translates']) > 0) {
                         foreach($language['translates'] as $translate) {
-                            Translate::create(array_merge($translate, ['language' => $newLanguage->id, 'translate_id' => $text->id]));
+                            if(!empty($translate['language'])) $lang = $translate['language'];
+                            else $lang = $newLanguage->id;
+                            $newLanguages[] = Translate::create(array_merge($translate, ['language' => $lang, 'translate_id' => $text->id]));
                         }
                     }
                     else {
@@ -37,7 +44,7 @@ class LanguageController extends Controller {
             }
         }
 
-        return true;
+        return $newLanguages;
     }
 
     public function delete($id) {

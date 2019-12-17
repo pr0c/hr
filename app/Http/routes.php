@@ -12,29 +12,18 @@
 */
 
 Route::get('/', function () {
-    $services = [
-        [
-            'pivot' => [
-                'account_id' => 0,
-                'service_id' => 15
-            ]
-        ],
-        [
-            'pivot' => [
-                'account_id' => 0,
-                'service_id' => 47
-            ]
-        ]
-    ];
-
-    $new_services = array_pluck($services, 'pivot.service_id');
-    print_r($new_services);
+    echo 'HR';
 });
 
 //Person
 Route::get('/person/{id}/{lang?}', 'PersonController@getPerson');
 Route::post('/person', 'PersonController@store');
 Route::post('/person/account', 'PersonController@ownAccount');
+Route::post('/person/facepic/{id}', 'PersonController@changeFacePic');
+
+//Group
+Route::get('/group/{id}/{lang?}', 'GroupController@get');
+Route::post('/group', 'GroupController@store');
 
 //Account
 Route::get('/account/{id}', 'AccountController@getAccount');
@@ -46,3 +35,9 @@ Route::post('/text', 'TextController@store');
 
 //Language
 Route::post('/language', 'LanguageController@store');
+Route::get('/language/{lang?}', 'LanguageController@index');
+
+//Attachment
+Route::post('/attachment', 'AttachmentController@upload');
+Route::get('/attachment/{id}', 'AttachmentController@getAttachment');
+Route::delete('/attachment/{id}', 'AttachmentController@removeAttachment');

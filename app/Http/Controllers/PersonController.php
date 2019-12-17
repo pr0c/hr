@@ -91,6 +91,12 @@ class PersonController extends Controller {
         return false;
     }
 
+    public function changeFacePic($id, $file_id) {
+        $file = File::find($file_id);
+        $person = Person::find($id);
+        
+    }
+
     public function ownAccount() {
         if(request()->has(['person_id', 'account_id'])) {
             $personID = request()->input('person_id');

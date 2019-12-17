@@ -10,10 +10,16 @@ class Language extends Model {
     public $timestamps = false;
 
     public function title() {
-        return $this->belongsTo(Text::class, 'id', 'title_id');
+        return $this->hasMany(Translate::class, 'translate_id', 'title_id');
     }
 
     public function translates() {
         return $this->hasMany(Translate::class, 'language');
+    }
+
+    public function scopeWithTranslate($query, $lang = 1) {
+        return $query->with(['title' => function($title) use($lang) {
+           $title->translated($lang);
+        }]);
     }
 }

@@ -12,4 +12,8 @@ class AccountType extends Model {
     public function title() {
         return $this->hasMany(Translate::class, 'translate_id', 'title_id');
     }
+
+    public function allowedServices() {
+        return $this->belongsToMany(AccountService::class, 'account_type_services', 'service_id', 'type_id');
+    }
 }
