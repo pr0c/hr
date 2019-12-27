@@ -15,7 +15,7 @@ class EvaluationJobSuitability extends Model {
         return $this->hasOne(JobTitle::class, 'id', 'job_title_id');
     }
 
-    public function currency() {
+    public function currency_info() {
         return $this->hasOne(Currency::class, 'id', 'currency');
     }
 }

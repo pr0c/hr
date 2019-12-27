@@ -24,7 +24,7 @@ class Evaluation extends Model {
         return $this->hasOne(Person::class, 'id', 'evaluator');
     }
 
-    public function attachments() {
+    public function attachment_list() {
         return $this->hasMany(Attachment::class, 'attachment_id', 'attachments');
     }
 
@@ -37,11 +37,11 @@ class Evaluation extends Model {
     }
 
     public function mbtis() {
-        return $this->belongsToMany(Mbti::class, 'evaluation_mbti', 'evaluation_id', 'mbti_type');
+        return $this->belongsToMany(Mbti::class, 'evaluation_mbti', 'evaluation_id', 'mbti_type')->withPivot('possibility');
     }
 
     public function physical() {
-        return $this->belongsToMany(Measurement::class, 'evaluation_physicals', 'evaluatin_id', 'physical_type');
+        return $this->belongsToMany(Measurement::class, 'evaluation_physicals', 'evaluation_id', 'measurement')->withPivot('amount');
     }
 
     public function salaries() {
@@ -53,14 +53,14 @@ class Evaluation extends Model {
     }
 
     public function availabilities() {
-        return $this->belongsToMany(Availability::class, 'evaluation_availabilities', 'type', 'evaluation_id');
+        return $this->belongsToMany(Availability::class, 'evaluation_availabilities', 'availability_id', 'evaluation_id');
     }
 
     public function scopeExtended($query, $lang = 1) {
         return $query->with([
             'person',
             'evaluator',
-            'attachments' => function($attachment) {
+            'attachment_list' => function($attachment) {
                 $attachment->with('file');
             },
             'method' => function($method) use ($lang) {
@@ -101,7 +101,7 @@ class Evaluation extends Model {
                                 $jobTitle->translated($lang);
                             }]);
                         },
-                        'currency' => function($currency) use ($lang) {
+                        'currency_info' => function($currency) use ($lang) {
                             $currency->with(['title' => function($currencyTitle) use ($lang) {
                                 $currencyTitle->translated($lang);
                             }]);
@@ -110,14 +110,7 @@ class Evaluation extends Model {
                 );
             },
             'availabilities' => function($availability) use ($lang) {
-                $availability->with(
-                    [
-                        'places',
-                        'title' => function($title) use ($lang) {
-                            $title->translated($lang);
-                        }
-                    ]
-                );
+                $availability->extended($lang);
             }
         ]);
     }

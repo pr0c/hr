@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Certification extends Model {
-    protected $fillable = [
-        'category', 'title_id', 'attachment', 'owner_id', 'owner_type'
+    protected $fillable = [ //add 'owner_id' and 'owner_type' if need to create certification with separately created owner
+        'category', 'attachment'
     ];
     protected $table = 'certifications';
     public $timestamps = false;
@@ -16,11 +16,8 @@ class Certification extends Model {
     }
 
     public function attachments() {
-        return $this->hasMany(Attachment::class, 'attachment_id', 'attachment');
-    }
-
-    public function title() {
-        return $this->hasMany(Translate::class, 'translate_id', 'title_id');
+//        return $this->hasMany(Attachment::class, 'attachment_id', 'attachment');
+        return $this->morphMany(Attachment::class, 'owner');
     }
 
     public function type() {
@@ -37,9 +34,6 @@ class Certification extends Model {
                 'owner',
                 'attachments' => function($attachment) {
                     $attachment->with('file');
-                },
-                'title' => function($title) use ($lang) {
-                    $title->translated($lang);
                 },
                 'type' => function($type) use ($lang) {
                     $type->extended($lang);

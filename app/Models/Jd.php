@@ -14,6 +14,8 @@ class Jd extends Model {
     ];
     public $timestamps = false;
 
+    public static $validation = [];
+
     public function scopeExtended($query, $lang = 1) {
         return $query->with(
             [
@@ -112,7 +114,7 @@ class Jd extends Model {
     }
 
     public function availabilities() {
-        return $this->belongsToMany(Availability::class, 'jd_availabilities', 'type', 'jd_id');
+        return $this->belongsToMany(AvailabilityType::class, 'jd_availabilities', 'type', 'jd_id');
     }
 
     public function certifications() {

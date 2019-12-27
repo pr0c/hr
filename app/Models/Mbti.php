@@ -8,6 +8,8 @@ class Mbti extends Model {
     protected $fillable = [
         'code', 'role_id', 'verb_id', 'seasonal_clock', 'elemental'
     ];
+    protected $table = 'mbti_types';
+    public $timestamps = false;
 
     public function role() {
         return $this->hasMany(Translate::class, 'translate_id', 'role_id');

@@ -16,4 +16,17 @@ class Country extends Model {
     public function currency() {
         return $this->belongsToMany(Currency::class, 'countries_currencies', 'currency_id', 'country_id');
     }
+
+    public function scopeExtended($query, $lang = 1) {
+        return $query->with([
+            'title' => function($title) use ($lang) {
+                $title->translated($lang);
+            },
+            'currency' => function($currency) use ($lang) {
+                $currency->with(['title' => function($title) use ($lang) {
+                    $title->translated($lang);
+                }]);
+            }
+        ]);
+    }
 }

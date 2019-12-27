@@ -17,7 +17,9 @@ class UserAccount extends Model {
         return $this->hasOne(Account::class, 'id', 'account_id');
     }
 
-    public function scopeWithInfo($query) {
-        return $query->with('account');
+    public function scopeWithInfo($query, $lang = 1) {
+        return $query->with(['account' => function($account) use ($lang) {
+            $account->extended($lang);
+        }]);
     }
 }

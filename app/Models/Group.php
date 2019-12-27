@@ -17,11 +17,49 @@ class Group extends Model {
         'email' => 'email'
     ];
 
+    public $timestamps = false;
+
     public function ownAccounts() {
         return $this->morphMany(Account::class, 'owner');
     }
 
     public function userAccounts() {
         return $this->morphMany(UserAccount::class, 'user');
+    }
+
+    public function owner() {
+        return $this->morphTo('owner');
+    }
+
+    public function departments() {
+        return $this->morphMany(Group::class, 'owner');
+    }
+
+    public function membersHistory() {
+        return $this->hasMany(JobHistory::class, 'group_id', 'id');
+    }
+
+    public function scopeExtended($query, $lang = 1) {
+        return $query->with([
+            'userAccounts',
+            'owner',
+            'departments',
+            'membersHistory'
+        ]);
+    }
+
+    public function scopeFull($query, $lang = 1) {
+        return $query->with([
+            'userAccounts' => function($account) use ($lang) {
+                $account->withInfo($lang);
+            },
+            'owner',
+            'departments' => function($department) use ($lang) {
+                $department->extended($lang);
+            },
+            'membersHistory' => function($member) use ($lang) {
+                $member->extended($lang);
+            }
+        ]);
     }
 }

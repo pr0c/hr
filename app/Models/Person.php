@@ -13,6 +13,15 @@ class Person extends Model {
     protected $table = 'persons';
     public $timestamps = false;
 
+    public static $validation = [
+        'first_name' => 'required|alpha',
+        'middle_name' => 'alpha',
+        'last_name' => 'required|alpha',
+        'gender' => 'numeric',
+        'birth_date' => 'date',
+        'face_pic' => 'numeric'
+    ];
+
     public function ownAccounts() {
         return $this->morphMany(Account::class, 'owner');
     }
@@ -29,16 +38,49 @@ class Person extends Model {
         return $query->with('photos');
     }
 
-    public function facePic() {
-        return $this->hasOne(Attachment::class, 'attachment_id', 'face_pic');
+    public function mainPhoto() {
+        return $this->hasOne(Attachment::class, 'id', 'face_pic');
     }
 
     public function photos() {
-        return $this->hasMany(Attachment::class, 'attachment_id', 'attachment_id');
+//        return $this->hasMany(Attachment::class, 'owner_');
+        return $this->morphMany(Attachment::class, 'owner');
     }
 
     public function certifications() {
         return $this->morphMany(Certification::class, 'owner');
+    }
+
+    public function country() {
+        return $this->hasOne(Country::class, 'id', 'country');
+    }
+
+    public function evaluations() {
+        return $this->hasMany(Evaluation::class, 'person', 'id');
+    }
+
+    public function madeEvaluations() {
+        return $this->hasMany(Evaluation::class, 'evaluator', 'id');
+    }
+
+    public function scopeExtended($query, $lang = 1) {
+        return $query->with([
+            'userAccounts' => function($userAccount) use ($lang) {
+                $userAccount->withInfo($lang);
+            },
+            'evaluations' => function($evaluation) use ($lang) {
+                $evaluation->extended($lang);
+            },
+            'certifications' => function($certificate) use ($lang) {
+                $certificate->extended($lang);
+            },
+            'photos' => function($photo) {
+                $photo->with('file');
+            },
+            'mainPhoto' => function($facePic) {
+                $facePic->with('file');
+            }
+        ]);
     }
 
     /*public function scopeWithUserAccounts($query, $lang = 1) {

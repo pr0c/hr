@@ -20,10 +20,16 @@ Route::get('/person/{id}/{lang?}', 'PersonController@getPerson');
 Route::post('/person', 'PersonController@store');
 Route::post('/person/account', 'PersonController@ownAccount');
 Route::post('/person/facepic/{id}', 'PersonController@changeFacePic');
+Route::post('/person/{id}', 'PersonController@update');
+
+//Evaluation
+Route::get('/evaluation/{id}/{lang?}', 'EvaluationController@get');
+Route::post('/evaluation/{id}', 'EvaluationController@store');
 
 //Group
 Route::get('/group/{id}/{lang?}', 'GroupController@get');
 Route::post('/group', 'GroupController@store');
+Route::post('/group/{id}', 'GroupController@update');
 
 //Account
 Route::get('/account/{id}', 'AccountController@getAccount');
@@ -41,3 +47,8 @@ Route::get('/language/{lang?}', 'LanguageController@index');
 Route::post('/attachment', 'AttachmentController@upload');
 Route::get('/attachment/{id}', 'AttachmentController@getAttachment');
 Route::delete('/attachment/{id}', 'AttachmentController@removeAttachment');
+
+//Tests
+Route::post('/test/evaluation', 'TestController@testEvaluation');
+Route::post('/test/person', 'TestPerson@runStore');
+Route::post('/test/cert', 'TestPerson@testCert');
