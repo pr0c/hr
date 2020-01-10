@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Availability;
+use App\Models\Mbti;
+use App\Models\Measurement;
+use App\Models\Skill;
 use App\Models\Text;
 use App\Models\Translate;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -120,7 +124,11 @@ abstract class Controller extends BaseController
                 }
             }
 
-            $newSkill = Skill::create($skill);
+            if(isset($skill['add']))
+                $newSkill = Skill::create($skill);
+            else if(isset($skill['id'])) {
+                Skill::find($skill['id'])->fill($skill)->save();
+            }
             if($newSkill->id) $entity->skills()->attach($newSkill->id);
         }
     }
@@ -128,7 +136,9 @@ abstract class Controller extends BaseController
     protected function attachMbti(&$entity, $mbtis) {
         foreach($mbtis as $mbti) {
             $possibility = !empty($mbti['pivot']['possibility']) ? $mbti['pivot']['possibility'] : 0;
-            if(!empty($mbti['pivot']['mbti_type'])) $entity->mbtis()->attach($mbti['pivot']['mbti_type'], ['possibility' => $mbti['pivot']['possibility']]);
+            if(isset($mbti['add']))
+                if(!empty($mbti['pivot']['mbti_type'])) $entity->mbtis()->attach($mbti['pivot']['mbti_type'], ['possibility' => $mbti['pivot']['possibility']]);
+            else if(isset($mbti['id'])) Mbti::find($mbti['id'])->fill($mbti)->save();
         }
     }
 
@@ -140,15 +150,24 @@ abstract class Controller extends BaseController
             }
             else continue;
 
-            $newAvailability = Availability::create($availability);
-            $entity->availabilities()->attach($newAvailability->id);
+            if(isset($availability['add'])) {
+                $newAvailability = Availability::create($availability);
+                $entity->availabilities()->attach($newAvailability->id);
+            }
+            else if(isset($availability['id'])) {
+                Availability::find($availability['id'])->fill($availability)->save();
+            }
         }
     }
 
     protected function attachPhysical(&$entity, $physicals) {
         foreach($physicals as $physical) {
             if(empty($physical['pivot']['amount'])) continue;
-            if(!empty($physical['pivot']['measurement'])) $entity->physical()->attach($physical['pivot']['measurement'], ['amount' => $physical['pivot']['amount']]);
+            if(isset($physical['add']))
+                if(!empty($physical['pivot']['measurement'])) $entity->physical()->attach($physical['pivot']['measurement'], ['amount' => $physical['pivot']['amount']]);
+            else if(isset($physical['id'])) {
+
+            }
         }
     }
 

@@ -48,6 +48,13 @@ Route::post('/attachment', 'AttachmentController@upload');
 Route::get('/attachment/{id}', 'AttachmentController@getAttachment');
 Route::delete('/attachment/{id}', 'AttachmentController@removeAttachment');
 
+//Items
+Route::get('/countries/{lang?}', 'MainController@getCountries');
+Route::get('/account/types', 'MainController@getAccountTypes');
+Route::get('/certification/types/{lang?}', 'MainController@getCertificationTypes');
+Route::get('/evaluation/methods/{lang?}', 'MainController@getEvaluationMethods');
+Route::get('/skill/types/{lang?}', 'MainController@getSkillTypes');
+
 //Tests
 Route::post('/test/evaluation', 'TestController@testEvaluation');
 Route::post('/test/person', 'TestPerson@runStore');

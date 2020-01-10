@@ -74,34 +74,8 @@ class GroupController extends Controller {
 
             if(array_key_exists('members_history', $request)) {
                 foreach($request['members_history'] as $member) {
-                    if(array_key_exists('create_title', $member) && count($member['create_title']) > 0) {
-                        $translate_id = null;
-
-                        if(array_key_exists('job_title_id', $member) && !empty($member['job_title_id'])) {
-                            $jobTitle = JobTitle::find($member['job_title_id']);
-
-                            foreach($member['create_title'][0] as $lang => $text) {
-                                $this->addText($text, $lang, $jobTitle->title_id);
-                            }
-                        }
-                        else {
-                            foreach($member['create_title'][0] as $lang => $text) {
-                                $title = JobTitle::create([
-                                    'title_id' => $this->addText($text, $lang, $translate_id)->translate_id
-                                ]);
-
-                                if(is_null($translate_id)) {
-                                    $translate_id = $title->load('title')->translate_id;
-                                    $member['job_title_id'] = $title->id;
-                                }
-                            }
-                        }
-                    }
-
-                    if(array_key_exists('start_date', $member)) $this->formatDate($member['start_date']);
-                    if(array_key_exists('end_date', $member)) $this->formatDate($member['end_date']);
-
-                    $group->membersHistory()->create($member);
+//                    $this->addMember($group, $member);
+                    $this->modifyMember($group, $member);
                 }
             }
 
@@ -138,7 +112,9 @@ class GroupController extends Controller {
             }
 
             if(array_key_exists('members_history', $request)) {
-
+                foreach($request['members_history'] as $member) {
+                    $this->modifyMember($group, $member);
+                }
             }
 
             if(array_key_exists('remove_members', $request) && count($request['remove_members']) > 0) {
@@ -147,6 +123,43 @@ class GroupController extends Controller {
                     JobHistory::find($memberHistory)->delete();
                 }
             }
+        }
+    }
+
+    protected function modifyMember($group, $member) {
+        if(array_key_exists('create_title', $member) && count($member['create_title']) > 0) {
+            $translate_id = null;
+
+            if(array_key_exists('job_title_id', $member) && !empty($member['job_title_id'])) {
+                $jobTitle = JobTitle::find($member['job_title_id']);
+
+                foreach($member['create_title'][0] as $lang => $text) {
+                    $this->addText($text, $lang, $jobTitle->title_id);
+                }
+            }
+            else {
+                foreach($member['create_title'][0] as $lang => $text) {
+                    $title = JobTitle::create([
+                        'title_id' => $this->addText($text, $lang, $translate_id)->translate_id
+                    ]);
+
+                    if(is_null($translate_id)) {
+                        $translate_id = $title->load('title')->translate_id;
+                        $member['job_title_id'] = $title->id;
+                    }
+                }
+            }
+        }
+
+        if(array_key_exists('start_date', $member)) $this->formatDate($member['start_date']);
+        if(array_key_exists('end_date', $member)) $this->formatDate($member['end_date']);
+
+        if(array_key_exists('add', $member))
+            $group->membersHistory()->create($member);
+        else if(isset($member['id'])) {
+            $newMember = JobHistory::find($member['id']);
+            $newMember->fill($member);
+            $newMember->save();
         }
     }
 }

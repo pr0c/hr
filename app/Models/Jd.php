@@ -110,7 +110,9 @@ class Jd extends Model {
     }
 
     public function benefits() {
-        return $this->belongsToMany(Benefit::class, 'jd_benefits', 'benefit', 'jd_id');
+        return $this->belongsToMany(Benefit::class, 'jd_benefits', 'benefit', 'jd_id')->withPivot([
+            'week_days', 'frequency', 'availability', 'private'
+        ]);
     }
 
     public function availabilities() {

@@ -12,4 +12,10 @@ class AvailabilityType extends Model {
     public function title() {
         return $this->hasMany(Translate::class, 'translate_id', 'title_id');
     }
+
+    public function scopeExtended($query, $lang = 1) {
+        return $query->with(['title' => function($title) use ($lang) {
+            $title->translated($lang);
+        }]);
+    }
 }

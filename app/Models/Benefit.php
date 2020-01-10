@@ -9,7 +9,7 @@ class Benefit extends Model {
     protected $table = 'benefits';
     public $timestamps = false;
 
-    public function benefit() {
+    public function benefit_info() {
         return $this->hasMany(Translate::class, 'translate_id', 'benefit');
     }
 
