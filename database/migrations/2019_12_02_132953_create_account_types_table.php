@@ -16,7 +16,7 @@ class CreateAccountTypesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('title_id')->unsigned();
             $table->bigInteger('default_provider')->unsigned();
-            $table->foreign('title_id')->references('id')->on('texts');
+//            $table->foreign('title_id')->references('id')->on('texts');
         });
     }
 
