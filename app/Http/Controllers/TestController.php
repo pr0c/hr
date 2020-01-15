@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\Job;
+use App\Models\AccountService;
+use App\Models\AccountType;
 use App\Models\Availability;
 use App\Models\AvailabilityType;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Evaluation;
 use App\Models\EvaluationJobSuitability;
 use App\Models\EvaluationMethod;
 use App\Models\EvaluationSalary;
+use App\Models\Group;
 use App\Models\JobTitle;
+use App\Models\Language;
 use App\Models\Mbti;
 use App\Models\Measurement;
 use App\Models\Place;
@@ -21,7 +26,6 @@ use App\Models\Translate;
 
 class TestController extends Controller {
     public function testEvaluation() {
-
         $testData = [
             'moment' => '1990-11-15',
             'evaluator' => 27,
@@ -161,6 +165,65 @@ class TestController extends Controller {
         ];
 
         return AvailabilityType::create($testData);
+    }
+
+    public function testCountry($name = 'Ukraine', $lang = 1) {
+        return Country::create([
+            'title_id' => $this->addText($name, $lang)->translate_id
+        ]);
+    }
+
+    public function testLanguage($title = 'English') {
+        return Language::create([
+            'title_id' => $this->addText($title)->translate_id
+        ]);
+    }
+
+    public function testGroup() {
+        $this->testLanguage();
+
+        $data = [
+            'short_name' => 'Dutchstar',
+            'full_name' => 'Dutchstar',
+            'email' => 'admin@dutchstar.com',
+            'phone' => '77777777',
+            'address' => 'addr 33',
+            'city' => 'Lviv',
+            'country' => $this->testCountry()->id,
+            'vat' => '32423423',
+            'reg_number' => 95837402432,
+            'website' => 'dutchstar.com'
+        ];
+
+        $group = Group::create($data);
+
+        $type = $this->testAccountType();
+        $type->allowedServices()->attach(AccountService::create([
+            'title_id' => $this->addText('SMS')->translate_id
+        ])->id);
+        $type->allowedServices()->attach(AccountService::create([
+            'title_id' => $this->addText('Call')->translate_id
+        ])->id);
+
+        $accounts = [
+            [
+                'type' => $type->id,
+                'identifier' => '46984705'
+            ]
+        ];
+        $this->addAccounts($group, $accounts);
+
+        $group->membersHistory()->create([
+            'person_id' => 1
+        ]);
+
+        return Group::find($group->id)->extended();
+    }
+
+    public function testAccountType($type = 'Phone') {
+        return AccountType::create([
+            'title_id' => $this->addText($type)
+        ]);
     }
 
     /*private function addText($text, $lang = 1) {

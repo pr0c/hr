@@ -76,7 +76,7 @@ class PersonController extends Controller {
             }
 
             if(array_key_exists('certifications', $request)) {
-
+                $person->certifications()->create($request['certifications']);
             }
 
             return Person::extended()->find($person->id);

@@ -29,7 +29,7 @@ class TestPerson extends Controller {
             ],
             'certifications' => [
                 [
-                    'category' => 1
+                    'category' => $this->testCert()->id
                 ]
             ]
         ];

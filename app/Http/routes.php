@@ -15,6 +15,10 @@ Route::get('/', function () {
     echo 'HR';
 });
 
+Route::get('/index', function() {
+    echo 'INDEX';
+});
+
 //Person
 Route::get('/person/{id}/{lang?}', 'PersonController@getPerson');
 Route::post('/person', 'PersonController@store');
@@ -59,3 +63,4 @@ Route::get('/skill/types/{lang?}', 'MainController@getSkillTypes');
 Route::post('/test/evaluation', 'TestController@testEvaluation');
 Route::post('/test/person', 'TestPerson@runStore');
 Route::post('/test/cert', 'TestPerson@testCert');
+Route::post('/test/group', 'TestController@testGroup');

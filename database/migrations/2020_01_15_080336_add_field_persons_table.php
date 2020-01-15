@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAccountTypesTable extends Migration
+class AddFieldPersonsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,9 @@ class CreateAccountTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('account_types', function(Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('title_id')->unsigned();
-            $table->bigInteger('default_provider')->unsigned();
+        Schema::table('persons', function(Blueprint $table) {
+            $table->bigInteger('main_job')->unsigned()->nullable();
+            $table->foreign('main_job')->references('id')->on('job_history');
         });
     }
 
@@ -26,6 +25,6 @@ class CreateAccountTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account_types');
+        //
     }
 }
