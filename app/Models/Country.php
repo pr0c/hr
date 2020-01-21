@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model {
-    protected $fillable = ['title_id'];
+    protected $fillable = ['title_id', 'flag'];
     protected $table = 'countries';
     public $timestamps = false;
 
@@ -14,7 +14,7 @@ class Country extends Model {
     }
 
     public function currency() {
-        return $this->belongsToMany(Currency::class, 'countries_currencies', 'currency_id', 'country_id');
+        return $this->belongsToMany(Currency::class, 'countries_currencies', 'country_id', 'currency_id');
     }
 
     public function scopeExtended($query, $lang = 1) {

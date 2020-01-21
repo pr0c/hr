@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SkillType extends Model {
-    protected $fillable = ['title_id', 'category', 'sub_category'];
-    protected $table = 'skill_types';
+class GroupType extends Model {
+    protected $fillable = ['title_id', 'category'];
+    protected $table = 'group_types';
     public $timestamps = false;
 
     public function title() {
@@ -14,11 +14,7 @@ class SkillType extends Model {
     }
 
     public function category_info() {
-        return $this->hasOne(SkillTypeCategory::class, 'id', 'category');
-    }
-
-    public function sub_category_info() {
-        return $this->hasOne(SkillSubCategory::class, 'id', 'sub_category');
+        return $this->hasMany(Translate::class, 'translate_id', 'category');
     }
 
     public function scopeExtended($query, $lang = 1) {
@@ -28,10 +24,7 @@ class SkillType extends Model {
                     $title->translated($lang);
                 },
                 'category_info' => function($category) use ($lang) {
-                    $category->extended($lang);
-                },
-                'sub_category_info' => function($sub_category) use ($lang) {
-                    $sub_category->extended($lang);
+                    $category->translated($lang);
                 }
             ]
         );

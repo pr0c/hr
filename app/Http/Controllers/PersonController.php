@@ -58,6 +58,7 @@ class PersonController extends Controller {
     public function store() {
         if(request()->isJson()) {
             $request = json_decode(request()->getContent(), true);
+            if(is_null($request)) return ['error' => 'JSON error', 'request' => request()->all()];
 
             $validator = \Validator::make($request, Person::$validation);
 
@@ -66,23 +67,21 @@ class PersonController extends Controller {
             }
 
             $person = new Person();
+            if($request['birth_date']) $this->formatDate($request['birth_date']);
             $person->fill($request);
-
-            if(!empty($person->birth_date)) $this->formatDate($person->birth_date);
             $person->save();
 
-            if(array_key_exists('user_accounts', $request)) {
+            if(array_key_exists('user_accounts', $request) && count($request['user_accounts']) > 0) {
                 $this->addAccounts($person, $request['user_accounts']);
             }
 
-            if(array_key_exists('certifications', $request)) {
+            if(array_key_exists('certifications', $request) && count($request['certifications']) > 0) {
                 $person->certifications()->create($request['certifications']);
             }
 
             return Person::extended()->find($person->id);
         }
-
-        return false;
+        else return ['error' => 'JSON error', 'request' => request()->all()];
     }
 
     public function changeFacePic($id, $file_id) {

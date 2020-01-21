@@ -20,7 +20,7 @@ class Evaluation extends Model {
         return $this->hasOne(Person::class, 'id', 'person');
     }
 
-    public function evaluator() {
+    public function evaluatorInfo() {
         return $this->hasOne(Person::class, 'id', 'evaluator');
     }
 
@@ -53,13 +53,13 @@ class Evaluation extends Model {
     }
 
     public function availabilities() {
-        return $this->belongsToMany(Availability::class, 'evaluation_availabilities', 'availability_id', 'evaluation_id');
+        return $this->belongsToMany(Availability::class, 'evaluation_availabilities', 'evaluation_id', 'availability_id');
     }
 
     public function scopeExtended($query, $lang = 1) {
         return $query->with([
             'person',
-            'evaluator',
+            'evaluatorInfo',
             'attachment_list' => function($attachment) {
                 $attachment->with('file');
             },

@@ -15,9 +15,15 @@ Route::get('/', function () {
     echo 'HR';
 });
 
-Route::get('/index', function() {
-    echo 'INDEX';
+Route::get('/test', function() {
+    return view('welcome');
 });
+
+Route::get('/welcome', function() {
+    return view('welcome');
+});
+
+Route::get('/initiate', 'MainController@initiate');
 
 //Person
 Route::get('/person/{id}/{lang?}', 'PersonController@getPerson');
@@ -32,8 +38,10 @@ Route::post('/evaluation/{id}', 'EvaluationController@store');
 
 //Group
 Route::get('/group/{id}/{lang?}', 'GroupController@get');
+Route::get('/find_group/{filter}/{lang?}', 'GroupController@find');
 Route::post('/group', 'GroupController@store');
 Route::post('/group/{id}', 'GroupController@update');
+Route::get('/departments/{id}', 'GroupController@getDepartments');
 
 //Account
 Route::get('/account/{id}', 'AccountController@getAccount');
@@ -46,6 +54,7 @@ Route::post('/text', 'TextController@store');
 //Language
 Route::post('/language', 'LanguageController@store');
 Route::get('/language/{lang?}', 'LanguageController@index');
+Route::get('/translates/{id}', 'MainController@getTranslates');
 
 //Attachment
 Route::post('/attachment', 'AttachmentController@upload');
@@ -54,10 +63,17 @@ Route::delete('/attachment/{id}', 'AttachmentController@removeAttachment');
 
 //Items
 Route::get('/countries/{lang?}', 'MainController@getCountries');
-Route::get('/account/types', 'MainController@getAccountTypes');
+Route::get('/account_types/{lang?}', 'MainController@getAccountTypes');
 Route::get('/certification/types/{lang?}', 'MainController@getCertificationTypes');
+Route::get('/certification/categories/{typeId}/{lang?}', 'MainController@getCertificationCategories');
 Route::get('/evaluation/methods/{lang?}', 'MainController@getEvaluationMethods');
 Route::get('/skill/types/{lang?}', 'MainController@getSkillTypes');
+Route::get('/account_services/{type}/{lang?}', 'MainController@getAccountTypeServices');
+Route::get('/group_types/{lang?}', 'MainController@getGroupTypes');
+Route::get('/find_entity/{filter}/{lang?}', 'MainController@findEntity');
+Route::get('/find_job_title/{filter}/{lang?}', 'MainController@findJobTitle');
+Route::get('/find_person/{filter}/{lang?}', 'MainController@findPerson');
+Route::get('/find_skill/{filter}/{lang?}', 'SkillTypeController@find');
 
 //Tests
 Route::post('/test/evaluation', 'TestController@testEvaluation');

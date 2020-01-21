@@ -5,7 +5,6 @@ namespace App\Traits;
 trait Translate {
     public function getTranslate($textId, $lang) {
         $text = \App\Models\Translate::where('translate_id', '=', $textId)->where('language', '=', $lang)->get();
-
         return $text;
     }
 

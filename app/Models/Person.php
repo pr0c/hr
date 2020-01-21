@@ -63,6 +63,10 @@ class Person extends Model {
         return $this->hasMany(Evaluation::class, 'evaluator', 'id');
     }
 
+    public function jobs() {
+        return $this->hasMany(JobHistory::class, 'person_id', 'id');
+    }
+
     public function scopeExtended($query, $lang = 1) {
         return $query->with([
             'userAccounts' => function($userAccount) use ($lang) {
@@ -79,6 +83,9 @@ class Person extends Model {
             },
             'mainPhoto' => function($facePic) {
                 $facePic->with('file');
+            },
+            'jobs' => function($job) use ($lang) {
+                $job->extended($lang);
             }
         ]);
     }

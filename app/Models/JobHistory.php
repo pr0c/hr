@@ -19,7 +19,7 @@ class JobHistory extends Model {
         return $this->hasOne(Group::class, 'id', 'group_id');
     }
 
-    public function department() {
+    public function department_info() {
         return $this->hasOne(Group::class, 'id', 'department');
     }
 
@@ -35,7 +35,7 @@ class JobHistory extends Model {
         return $query->with([
             'person',
             'group',
-            'department',
+            'department_info',
             'country_info' => function($country) use ($lang) {
                 $country->extended($lang);
             },

@@ -48,10 +48,9 @@ abstract class Controller extends BaseController
 
     protected function addAccounts($entity, $accounts) {
         foreach($accounts as $account) {
-            if(!$account['account']) continue;
-            else $account = $account['account'];
+            if(array_key_exists('account', $account)) $account = $account['account'];
 
-            if(empty($account['owner_id']) && !Account::isExist($account['identifier'])) {
+            if(empty($account['owner_id'])) {
                 $validator = \Validator::make($account, Account::$validation);
                 if($validator->fails()) {
                     return $validator->errors();
@@ -66,7 +65,7 @@ abstract class Controller extends BaseController
                 ]);
             }
             else {
-                if(empty($account['id'])) {
+                if(!empty($account['new'])) {
                     $validator = \Validator::make($account, Account::$validation);
                     if($validator->fails()) {
                         return $validator->errors();
@@ -75,17 +74,29 @@ abstract class Controller extends BaseController
                     $accountID = $newAccount->id;
                 }
                 else $accountID = $account['id'];
-
-                $entity->userAccounts()->create([
-                    'account_id' => $accountID
-                ]);
+                try {
+                    $entity->userAccounts()->create([
+                        'account_id' => $accountID
+                    ]);
+                }
+                catch(\Exception $ex) {
+                    return print_r(['error' => $ex]);
+                }
             }
 
-            if($account['services'] && empty($account['id'])) {
-                $services = AccountService::find(array_pluck($account['services'], 'pivot.service_id'));
-                foreach($services as $service) {
-                    $newAccount->services()->attach($service);
+            if ($account['services'] && !empty($account['new'])) {
+                foreach ($account['services'] as $service) {
+                    try {
+                        $newAccount->services()->attach($service['id']);
+                    }
+                    catch(\Exception $ex) {
+                        print_r(['error' => $ex]);
+                    }
                 }
+                //$services = AccountService::find(array_pluck($account['services'], 'pivot.service_id'));
+                //foreach($services as $service) {
+                //    $newAccount->services()->attach($service);
+                //}
             }
         }
     }

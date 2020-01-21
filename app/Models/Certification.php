@@ -25,7 +25,7 @@ class Certification extends Model {
     }
 
     public function categories() {
-        return $this->belongsToMany(CertificationCategory::class, 'certification_category_list', 'category_id', 'certification_id');
+        return $this->belongsToMany(CertificationCategory::class, 'certification_category_list', 'certification_id', 'category_id');
     }
 
     public function scopeExtended($query, $lang = 1) {

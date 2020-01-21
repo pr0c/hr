@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 use App\Models\JobHistory;
 use App\Models\JobTitle;
+use Doctrine\DBAL\Schema\Table;
+use Illuminate\Support\Facades\DB;
 
 class GroupController extends Controller {
     public function get($id, $lang = 1) {
@@ -69,18 +71,24 @@ class GroupController extends Controller {
                         }
                     }
                 }*/
-                $this->addAccounts($group, $request['user_accounts']);
+                try {
+                    $this->addAccounts($group, $request['user_accounts']);
+                }
+                catch(\Exception $ex) {
+                    return ['error' => $ex];
+                }
             }
 
-            if(array_key_exists('members_history', $request)) {
+            if(array_key_exists('members_history', $request) && count($request['members_history']) > 0) {
                 foreach($request['members_history'] as $member) {
 //                    $this->addMember($group, $member);
                     $this->modifyMember($group, $member);
                 }
             }
 
-            return Group::full()->find($group->id);
+            return ['id' => $group->id];
         }
+        else return request()->all();
     }
 
     public function update($groupID) {
@@ -124,6 +132,60 @@ class GroupController extends Controller {
                 }
             }
         }
+    }
+
+    public function find($filter, $lang = 1) {
+        $cat_name = '';
+        if($lang == 1) $cat_name = 'Groups';
+        else if($lang == 2) $cat_name = 'Групи';
+//        $groups = Group::extended($lang)->where('full_name', 'like', '%' . $filter . '%')->skip(0)->take(15)->get();
+        $groups = Group::select('id', 'full_name AS title')->where('full_name', 'like', '%' . $filter . '%')->skip(0)->take(15)->get();
+        $groups->map(function($group) use($cat_name) {
+            $group['title'] = [
+                [
+                    'text' => $group['title']
+                ]
+            ];
+            $group['category_info'] = [
+                [
+                    'text' => $cat_name
+                ]
+            ];
+
+            return $group;
+        });
+
+        return [
+            "2" => $groups
+        ];
+    }
+
+    public function getDepartments($id, $lang = 1) {
+        $departments = Group::select('id', 'full_name AS title')
+            ->where('owner_id', $id)
+            ->where('owner_type', 'App\\Models\\Group')->get();
+
+        if($lang == 1) $cat = 'Departments';
+        else if($lang == 2) $cat = 'Відділи';
+
+        $departments->map(function($department) use($cat) {
+            $department['title'] = [
+                [
+                    'text' => $department['title']
+                ]
+            ];
+            $department['category_info'] = [
+                [
+                    'text' => $cat
+                ]
+            ];
+
+            return $department;
+        });
+
+        return [
+            "1" => $departments
+        ];
     }
 
     protected function modifyMember($group, $member) {

@@ -29,8 +29,12 @@ class Account extends Model {
         return $this->belongsToMany(AccountService::class, 'supported_services', 'account_id', 'service_id');
     }
 
-    public function provider() {
+    public function provider_info() {
         return $this->hasOne(Group::class, 'id', 'provider');
+    }
+
+    public function type_info() {
+        return $this->hasOne(AccountType::class, 'id', 'type');
     }
 
     public function scopeExtended($query, $lang = 1) {
@@ -42,7 +46,7 @@ class Account extends Model {
                         $title->translated($lang);
                     }]);
                 },
-                'provider'
+                'provider_info'
             ]
         );
     }

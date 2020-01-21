@@ -8,7 +8,7 @@ class Group extends Model {
     use \App\Traits\Account;
 
     protected $fillable = [
-        'short_name', 'full_name', 'email', 'phone', 'address', 'city', 'country', 'vat', 'reg_number', 'website', 'owner_id', 'owner_type'
+        'short_name', 'full_name', 'email', 'phone', 'address', 'city', 'country', 'vat', 'reg_number', 'website', 'owner_id', 'owner_type', 'type', 'logo'
     ];
 
     public static $validation = [
@@ -39,12 +39,17 @@ class Group extends Model {
         return $this->hasMany(JobHistory::class, 'group_id', 'id');
     }
 
+    public function type_info() {
+        return $this->hasOne(GroupType::class, 'id', 'type');
+    }
+
     public function scopeExtended($query, $lang = 1) {
         return $query->with([
             'userAccounts',
             'owner',
             'departments',
-            'membersHistory'
+            'membersHistory',
+            'type_info'
         ]);
     }
 
@@ -59,6 +64,9 @@ class Group extends Model {
             },
             'membersHistory' => function($member) use ($lang) {
                 $member->extended($lang);
+            },
+            'type_info' => function($type) use ($lang) {
+                $type->extended($lang);
             }
         ]);
     }
