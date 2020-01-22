@@ -11,11 +11,13 @@ class Group extends Model {
         'short_name', 'full_name', 'email', 'phone', 'address', 'city', 'country', 'vat', 'reg_number', 'website', 'owner_id', 'owner_type', 'type', 'logo'
     ];
 
-    public static $validation = [
+    /*public static $validation = [
         'short_name' => 'unique:groups',
         'full_name' => 'required|unique:groups',
         'email' => 'email'
-    ];
+    ];*/
+
+    public static $validation = [];
 
     public $timestamps = false;
 

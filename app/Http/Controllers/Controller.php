@@ -8,6 +8,7 @@ use App\Models\Measurement;
 use App\Models\Skill;
 use App\Models\Text;
 use App\Models\Translate;
+use App\Models\UserAccount;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -30,8 +31,9 @@ abstract class Controller extends BaseController
                     continue;
                 }
 
-                $account = Account::find($account['account_id']);
+                $accountID = $account['account_id'];
                 $accountData = $account['account'];
+                $account = Account::find($accountID);
                 $account->fill($accountData)->save();
 
                 if(array_key_exists('services', $accountData)) {

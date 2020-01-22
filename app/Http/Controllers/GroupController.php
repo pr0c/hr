@@ -108,14 +108,13 @@ class GroupController extends Controller {
                 return ['error' => $ex];
             }
 
-            $group->fill($request);
-            $group->save();
+            $group->fill($request)->save();
 
             if(array_key_exists('user_accounts', $request)) {
                 $this->updateAccounts($group, $request['user_accounts']);
             }
 
-            if(array_key_exists('remove_accounts', $request)) {
+            if(array_key_exists('remove_accounts', $request) && count($request['remove_accounts']) > 0) {
                 $this->removeAccounts($group, $request['remove_accounts']);
             }
 
@@ -127,10 +126,11 @@ class GroupController extends Controller {
 
             if(array_key_exists('remove_members', $request) && count($request['remove_members']) > 0) {
                 foreach($request['remove_members'] as $memberHistory) {
-                    $group->membersHistory()->detach($memberHistory);
-                    JobHistory::find($memberHistory)->delete();
+                    $group->membersHistory()->where('id', $memberHistory)->delete();
                 }
             }
+
+            return ['true'];
         }
     }
 
